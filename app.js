@@ -64,7 +64,7 @@ const TRANSLATIONS = {
     'wheel roller': '健腹轮'
 };
 
-const BASE_MEDIA_URL = 'https://jsd.onmicrosoft.cn/gh/hasaneyldrm/exercises-dataset@main/data/';
+const BASE_MEDIA_URL = 'https://jsd.onmicrosoft.cn/gh/hasaneyldrm/exercises-dataset@main/';
 
 // 2. 全局状态
 let allExercises = [];

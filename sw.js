@@ -1,5 +1,5 @@
 // FitGuide PWA Service Worker
-const CACHE_NAME = 'fitguide-cache-v2';
+const CACHE_NAME = 'fitguide-cache-v3';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -44,8 +44,8 @@ self.addEventListener('fetch', event => {
     // 过滤非 GET 请求或外部接口
     if (event.request.method !== 'GET') return;
     
-    // 如果是动作演示动图 (托管在 GitHub)
-    if (event.request.url.includes('raw.githubusercontent.com')) {
+    // 如果是动作演示动图 (托管在 CDN)
+    if (event.request.url.includes('jsd.onmicrosoft.cn')) {
         event.respondWith(
             caches.match(event.request)
                 .then(cachedResponse => {
