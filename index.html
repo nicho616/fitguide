@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FitGuide - 健身动作浏览器与计划制定</title>
+    <meta name="description" content="FitGuide 是一个高颜值的健身动作浏览器，支持离线搜索、筛选 1300+ 运动动作，并支持一键制定每日训练计划并导出至 Obsidian。">
+    <meta name="theme-color" content="#0d0e12">
+    
+    <!-- PWA 支持 -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <!-- 谷歌字体 Outfit & Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 引入样式表 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 背景光效装饰 -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="app-container">
+        <!-- 头部导航 -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <h1>FitGuide</h1>
+            </div>
+            
+            <!-- 搜索框 -->
+            <div class="search-wrapper">
+                <input type="text" id="search-input" placeholder="搜索动作、部位、肌群... (如 push up)" autocomplete="off">
+                <span class="search-icon">🔍</span>
+                <button id="clear-search" class="clear-btn" style="display: none;">✕</button>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="header-actions">
+                <button id="toggle-plan-btn" class="plan-trigger-btn">
+                    <span class="btn-icon">📅</span>
+                    <span class="btn-text">今日训练</span>
+                    <span id="plan-badge" class="badge">0</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="app-main">
+            <!-- 侧边栏：筛选区 -->
+            <aside class="sidebar" id="filter-sidebar">
+                <div class="sidebar-header">
+                    <h2>筛选器</h2>
+                    <button id="close-filter-btn" class="mobile-only-btn">✕</button>
+                </div>
+                
+                <div class="filter-section">
+                    <h3>身体部位 (单选)</h3>
+                    <div class="filter-options-group" id="body-parts-group">
+                        <label class="filter-pill active" data-value="all">
+                            <input type="radio" name="bodyPart" value="all" checked> 全部部位
+                        </label>
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>训练肌群 (单选)</h3>
+                    <div class="filter-options-group" id="targets-group">
+                        <label class="filter-pill active" data-value="all">
+                            <input type="radio" name="target" value="all" checked> 全部肌群
+                        </label>
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>训练器械 (多选)</h3>
+                    <div class="filter-options-group" id="equipments-group">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 动作展示区 -->
+            <section class="content-section">
+                <!-- 统计与手机端筛选按钮 -->
+                <div class="content-meta">
+                    <div class="results-count">已筛选出 <span id="total-count">0</span> 个动作</div>
+                    <button id="mobile-filter-trigger" class="mobile-filter-btn">
+                        <span>🎛️ 筛选条件</span>
+                    </button>
+                </div>
+
+                <!-- 动作网格 -->
+                <div class="exercises-grid" id="exercises-grid">
+                    <!-- 骨架屏加载占位 -->
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+
+                <!-- 加载更多指示器 -->
+                <div id="load-more-trigger" class="load-more">
+                    <div class="spinner"></div>
+                    <span>正在加载更多动作...</span>
+                </div>
+            </section>
+        </main>
+
+        <!-- 今日计划悬浮侧边栏 -->
+        <div class="plan-drawer-overlay" id="plan-overlay"></div>
+        <div class="plan-drawer" id="plan-drawer">
+            <div class="drawer-header">
+                <h2>今日训练计划</h2>
+                <button id="close-plan-btn" class="close-drawer-btn">✕</button>
+            </div>
+            
+            <div class="drawer-content">
+                <div class="plan-actions">
+                    <button id="clear-plan-btn" class="action-btn danger-btn">清空计划</button>
+                    <button id="export-obsidian-btn" class="action-btn primary-btn">导出至 Obsidian</button>
+                </div>
+
+                <div id="plan-list" class="plan-list">
+                    <div class="empty-plan-tip">
+                        <div class="tip-icon">💪</div>
+                        <p>还没有添加任何动作</p>
+                        <p class="sub-tip">在左侧列表点击“加入计划”开始吧！</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 动作详情弹窗 -->
+        <div class="modal-overlay" id="detail-overlay"></div>
+        <div class="modal" id="detail-modal">
+            <button id="close-modal-btn" class="close-modal-btn">✕</button>
+            <div class="modal-content" id="modal-content">
+                <!-- 动态渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示框 -->
+    <div id="toast" class="toast">已成功复制到剪贴板！</div>
+
+    <!-- 引入核心 JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
