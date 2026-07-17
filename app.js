@@ -371,8 +371,10 @@ function openDetailModal(ex) {
     if (ex.gif_url) {
         const fullGifPath = BASE_MEDIA_URL + ex.gif_url;
         mediaHtml = `
-            <div class="modal-media-wrapper">
-                <img src="${fullGifPath}" alt="${ex.name}" class="modal-media" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="modal-media-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center; background-color: #0c0d12;">
+                <!-- 动图加载指示器 -->
+                <div class="image-loader-spinner" style="position: absolute; width: 30px; height: 30px; border: 3px solid rgba(255, 255, 255, 0.1); border-top-color: var(--primary-light); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                <img src="${fullGifPath}" alt="${ex.name}" class="modal-media" style="opacity: 0; transition: opacity var(--transition-fast);" onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';" onerror="this.style.display='none'; this.previousElementSibling.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="media-placeholder" style="display: none;">
                     <div class="placeholder-icon">🏋️‍♂️</div>
                     <span>原声动作演示加载失败</span>
