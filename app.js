@@ -119,8 +119,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadPlan();
     
     try {
-        // 加载数据 (使用国内加速镜像下载 17MB 数据文件，支持 Brotli 压缩且速度更快)
-        const response = await fetch('https://jsd.onmicrosoft.cn/gh/nicho616/fitguide@main/exercises.json');
+        // 加载数据 (强行拉取最新翻译数据，防 CDN 和浏览器缓存)
+        const response = await fetch('exercises.json?v=6');
         if (!response.ok) throw new Error('无法读取 exercises.json 数据文件');
         allExercises = await response.json();
         

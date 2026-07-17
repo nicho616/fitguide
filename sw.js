@@ -1,11 +1,11 @@
 // FitGuide PWA Service Worker
-const CACHE_NAME = 'fitguide-cache-v6';
+const CACHE_NAME = 'fitguide-cache-v7';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './style.css',
     './app.js',
-    'https://jsd.onmicrosoft.cn/gh/nicho616/fitguide@main/exercises.json',
+    './exercises.json?v=6',
     './manifest.json',
     './icons/icon-192.png',
     './icons/icon-512.png'
