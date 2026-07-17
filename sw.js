@@ -1,5 +1,5 @@
 // FitGuide PWA Service Worker
-const CACHE_NAME = 'fitguide-cache-v4';
+const CACHE_NAME = 'fitguide-cache-v5';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',

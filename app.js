@@ -213,9 +213,10 @@ function filterExercises() {
                             .map(input => input.value);
 
     filteredExercises = allExercises.filter(item => {
-        // 搜索词过滤
+        // 搜索词过滤 (同时支持英文名和中文名搜索)
         if (query) {
-            const nameMatch = item.name && item.name.toLowerCase().includes(query);
+            const nameMatch = (item.name && item.name.toLowerCase().includes(query)) || 
+                              (item.name_zh && item.name_zh.toLowerCase().includes(query));
             const bodyPartMatch = item.body_part && item.body_part.toLowerCase().includes(query);
             const targetMatch = item.target && item.target.toLowerCase().includes(query);
             const equipmentMatch = item.equipment && item.equipment.toLowerCase().includes(query);
@@ -292,9 +293,10 @@ function appendCards(startIndex, endIndex) {
         const descText = ex.instructions?.zh || ex.instructions?.en || '暂无详细步骤说明。';
         const isAdded = plan.some(p => p.id === ex.id);
         
+        const displayName = ex.name_zh || ex.name;
         card.innerHTML = `
             <div class="card-header">
-                <div class="exercise-name" title="${ex.name}">${ex.name}</div>
+                <div class="exercise-name" title="${ex.name}">${displayName}</div>
                 <div class="exercise-tags">
                     ${ex.body_part ? `<span class="tag tag-bodypart">${translate(ex.body_part)}</span>` : ''}
                     ${ex.target ? `<span class="tag tag-target">${translate(ex.target)}</span>` : ''}
@@ -392,7 +394,10 @@ function openDetailModal(ex) {
         ${mediaHtml}
         <div class="modal-body">
             <div class="modal-title-row">
-                <h2>${ex.name}</h2>
+                <div>
+                    <h2>${ex.name_zh || ex.name}</h2>
+                    <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">${ex.name}</div>
+                </div>
             </div>
             <div class="modal-meta-badges">
                 ${ex.body_part ? `<span class="tag tag-bodypart">${translate(ex.body_part)}</span>` : ''}
@@ -426,7 +431,7 @@ function togglePlanItem(ex, buttonEl) {
         plan.push(ex);
         buttonEl.classList.add('added');
         buttonEl.textContent = '✓ 已加入';
-        showToast(`已成功将动作 "${ex.name}" 加入计划`);
+        showToast(`已成功将动作 "${ex.name_zh || ex.name}" 加入计划`);
     } else {
         // 移出计划
         plan.splice(idx, 1);
@@ -475,7 +480,7 @@ function updatePlanUI() {
         div.className = 'plan-item';
         div.innerHTML = `
             <div class="plan-item-info">
-                <span class="plan-item-title">${item.name}</span>
+                <span class="plan-item-title">${item.name_zh || item.name}</span>
                 <span class="plan-item-subtitle">${translate(item.body_part)} | ${translate(item.equipment)}</span>
             </div>
             <button class="remove-item-btn" data-id="${item.id}" title="删除动作">✕</button>
@@ -549,7 +554,7 @@ status: 待执行
 
     plan.forEach((item, index) => {
         const steps = item.instruction_steps?.zh || item.instruction_steps?.en || [];
-        md += `### ${index + 1}. ${item.name} (${translate(item.body_part)} / ${translate(item.equipment)})\n`;
+        md += `### ${index + 1}. ${item.name_zh || item.name} (${translate(item.body_part)} / ${translate(item.equipment)})\n`;
         md += `- **目标部位**：${translate(item.body_part)} (${translate(item.target)})\n`;
         md += `- **使用器械**：${translate(item.equipment)}\n`;
         md += `- **训练步骤**：\n`;
